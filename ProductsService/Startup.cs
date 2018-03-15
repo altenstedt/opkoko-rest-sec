@@ -33,6 +33,7 @@ namespace ProductsService
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseDeveloperExceptionPage();
             app.UseAuthentication();
             app.UseMvc();
         }
