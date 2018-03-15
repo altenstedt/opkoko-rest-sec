@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ProductsService
@@ -15,6 +18,11 @@ namespace ProductsService
         [HttpGet]
         public IActionResult GetById(string id)
         {
+            if (!ProductId.IsValidId(id))
+            {
+                return BadRequest();
+            }
+
             if (string.IsNullOrEmpty(id) || !repository.ContainsKey(id))
             {
                 return NotFound();
@@ -35,16 +43,41 @@ namespace ProductsService
     {
         public Product(string id)
         {
-            Id = id;
+            Id = new ProductId(id);
         }
 
-        public string Id { get; }
+        public ProductId Id { get; }
 
         public string Name => "My Product";
 
         public bool CanRead(ClaimsPrincipal principal)
         {
             return principal.HasClaim(c => c.Type == "scope" && c.Value.Contains("read:product"));
+        }
+    }
+
+    public class ProductId
+    {
+        public ProductId(string id)
+        {
+            AssertId(id);
+
+            Value = id;
+        }
+
+        public string Value { get; }
+
+        public static bool IsValidId(string id)
+        {
+            return id.All(char.IsLetterOrDigit); // Regex.IsMatch(id, "^[a-f0-9]+$");
+        }
+
+        public static void AssertId(string id)
+        {
+            if (!IsValidId(id))
+            {
+                throw new ArgumentException($"Id {id} is not valid.");
+            }
         }
     }
 }
