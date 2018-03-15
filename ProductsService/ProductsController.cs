@@ -13,7 +13,7 @@ namespace ProductsService
 
             if (!product.CanRead(User))
             {
-                return Forbid();
+                // return Forbid();
             }
 
             return Ok(product);

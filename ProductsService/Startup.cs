@@ -12,7 +12,7 @@ namespace ProductsService
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IClaimsTransformation, ClaimsTransformation>();
+            // services.AddSingleton<IClaimsTransformation, ClaimsTransformation>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
@@ -22,18 +22,18 @@ namespace ProductsService
                 });
 
             services.AddMvc(config => {
-                var policy = new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .RequireAuthenticatedUser()
-                    .Build();
+                // var policy = new AuthorizationPolicyBuilder()
+                //     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                //     .RequireAuthenticatedUser()
+                //     .Build();
 
-                config.Filters.Add(new AuthorizeFilter(policy));
+                // config.Filters.Add(new AuthorizeFilter(policy));
             });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseAuthentication();
+            // app.UseAuthentication();
             app.UseMvc();
         }
     }
