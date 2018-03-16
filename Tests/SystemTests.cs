@@ -19,5 +19,14 @@ namespace Tests
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
+
+        [Fact]
+        public async Task  GetProductsShouldReturn200WhenAuthenticated()
+        {
+            var client = new TokenHttpClient();
+            var response = await client.GetAsync(new Uri(baseUri, "products"));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
     }
 }

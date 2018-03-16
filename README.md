@@ -18,20 +18,28 @@ cd Tests
 dotnet test --filter Category=Unit
 ```
 
-To run the system tests, you will first need a running product
-service:
-
+To run the system tests, you will need both a running identity and
+product service:
 
 ```shell
 cd ProductsService
 dotnet run
 ```
 
-Note the host and port where the service starts (we will assume
-http://localhost:5000 for the rest of these instructions.)
+```shell
+cd IdentityService
+dotnet run
+```
+
+Note the host and port where the product and identity service starts
+(we will assume http://localhost:5000, and http://localhost:4000,
+respectively.)
 
 Update field `baseUri` in class `SystemTests` to point to the URI of
-the running product service, and run the system tests:
+the running product service.  Also update the `tokenUri` field in
+class `TokenHttpClient` to point to the URI of the identity service.
+
+Run the system tests:
 
 ```shell
 cd Tests
