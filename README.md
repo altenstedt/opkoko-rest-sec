@@ -15,7 +15,7 @@ To run the sample, open a terminal window and start the product service:
 
 ```shell
 cd ProductsService
-dotnet
+dotnet run
 ```
 
 Note the host and port where the service starts (we will assume
