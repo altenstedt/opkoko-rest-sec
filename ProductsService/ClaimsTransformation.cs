@@ -7,26 +7,30 @@ namespace ProductsService
 {
     internal class ClaimsTransformation : IClaimsTransformation
     {
-        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
+        public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
-            if (!principal.HasClaim(c => c.Issuer == "LocalClaimsTransformer") && principal.Identity.IsAuthenticated)
+            await Task.Delay(0);
+
+            if (principal.Identity.IsAuthenticated)
             {
                 var identity = new ClaimsIdentity(principal.Identity);
 
-                var localCustomerId = GetInternalCustomerId(identity.Claims.Single(c => c.Type == "client_id").Value);
-                identity.AddClaim(new Claim("urn:local:customerId", localCustomerId, ClaimValueTypes.String, "LocalClaimsTransformer"));
-                
-                var result = new ClaimsPrincipal(identity);
+                // This sample will just add hard-coded claims to any authenticated
+                // user, but a real example would of course instead use a local
+                // account database to get information about what organization and
+                // local permissions to add.
 
-                return Task.FromResult(result);
+                // Transform scope and identity to local claims, for example:
+                identity.AddClaim(new Claim("urn:local:organization:id", "42"));
+
+                // Lookup local permissions
+                identity.AddClaim(new Claim("urn:local:permission:a", "true"));
+                identity.AddClaim(new Claim("urn:local:permission:b", "true"));
+
+                return new ClaimsPrincipal(identity);
             }
 
-            return Task.FromResult(principal);
-        }
-
-        private string GetInternalCustomerId(string userName)
-        {
-            return "Customer1";
+            return principal;
         }
     }
 }
