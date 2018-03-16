@@ -11,46 +11,23 @@ the presentation, is found in folder "ProductsService".
 
 ## Run the code
 
-To run the sample, open two terminal windows.  In the first, start the
-token service:
-
-```shell
-cd IdentityService
-dotnet run 
-```
-
-Note the host and port where the identity service starts (typically
-http://localhost:4000).  Update the Authority URL in class Startup to
-point to your identity service.  In the second terminal, start the
-products service.
+To run the sample, open a terminal window and start the product service:
 
 ```shell
 cd ProductsService
-dotnet run --urls http://localhost:5000
+dotnet
 ```
 
-You will need to select a different port than the token service is
-using, like we did above.
+Note the host and port where the service starts (we will assume
+http://localhost:5000 for the rest of these instructions.)
 
-You can now first verify that you will get a 401 from the products
-service:
-
-```
-GET http://localhost:5000/products HTTP/1.1
-```
-
-Get an access token from the token endpoint:
+Verify that you get a 500 response from the error resource:
 
 ```
-POST http://localhost:4000/connect/token
-Content-Type: application/x-www-form-urlencoded
-
-client_id=myclient&client_secret=secret&scope=read:product&grant_type=client_credentials
+GET http://localhost:5000/error HTTP/1.1
 ```
 
-And use the returned access token on the products endpoint:
-
-```
-GET http://localhost:5000/products HTTP/1.1
-Authorization: bearer <paste your access token here>
-```
+If you do enable the developer exception page, you will get a lot of
+error details, if you do not, the response will be empty.  You should
+never use `UseDeveloperExceptionPage` for production use since this
+_will_ leak sensitive information to a potential attacker.
