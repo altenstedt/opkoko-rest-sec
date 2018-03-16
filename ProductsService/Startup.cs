@@ -12,29 +12,35 @@ namespace ProductsService
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddSingleton<IClaimsTransformation, ClaimsTransformation>();
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => {
-                    options.RequireHttpsMetadata = false; // Only for testing purposes
-                    options.Authority = "http://localhost:4000/";
-                    options.Audience = "https://example.com/api";
-                });
-
-            services.AddMvc(config => {
-                // var policy = new AuthorizationPolicyBuilder()
-                //     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                //     .RequireAuthenticatedUser()
-                //     .Build();
-
-                // config.Filters.Add(new AuthorizeFilter(policy));
-            });
+            services.AddMvc();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // app.UseAuthentication();
             app.UseMvc();
         }
     }
 }
+
+/* Recommeded code for requiring authenticated users and authorization using JWT:
+    
+    services.AddSingleton<IClaimsTransformation, ClaimsTransformation>();
+    
+    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options => {
+            options.RequireHttpsMetadata = false; // Only for testing purposes
+            options.Authority = "http://localhost:4000/";
+            options.Audience = "https://example.com/api";
+        });
+    
+    services.AddMvc(config => {
+        var policy = new AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .Build();
+    
+        config.Filters.Add(new AuthorizeFilter(policy));
+    });
+        
+    app.UseAuthentication();            
+ */
