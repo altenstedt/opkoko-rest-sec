@@ -12,28 +12,40 @@ the presentation, is found in folder "ProductsService".
 ## Run the code
 
 To run the sample, open two terminal windows.  In the first, start the
-token service:
+product service:
+
+```shell
+cd ProductsService
+dotnet run
+```
+
+Note the host and port where the service starts (we will assume
+http://localhost:5000 for the rest of these instructions.)
+
+You can now verify that you will get a 200 and product response from
+the products service:
+
+```
+GET http://localhost:5000/products HTTP/1.1
+```
+
+Update class `Startup` in the products service to require user
+authentication and authorization using JWT.
+
+Start the identity service:
 
 ```shell
 cd IdentityService
 dotnet run 
 ```
 
-Note the host and port where the identity service starts (typically
-http://localhost:4000).  Update the Authority URL in class Startup to
-point to your identity service.  In the second terminal, start the
-products service.
+Note the host and port where the identity service starts (we will
+assume http://localhost:4000 for the rest of these instructions).
 
-```shell
-cd ProductsService
-dotnet run --urls http://localhost:5000
-```
+Update the Authority URL in class `Startup` of the product service to
+point to your identity service.
 
-You will need to select a different port than the token service is
-using, like we did above.
-
-You can now first verify that you will get a 401 from the products
-service:
+Verify that you get a 401 from the products service:
 
 ```
 GET http://localhost:5000/products HTTP/1.1
