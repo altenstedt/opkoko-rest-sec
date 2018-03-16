@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -21,11 +20,12 @@ namespace ProductsService
                 // local permissions to add.
 
                 // Transform scope and identity to local claims, for example:
-                identity.AddClaim(new Claim("urn:local:organization:id", "42"));
+                identity.AddClaim(new Claim(ClaimSettings.UrnLocalOrganizationId, "42"));
 
                 // Lookup local permissions
-                identity.AddClaim(new Claim("urn:local:permission:a", "true"));
-                identity.AddClaim(new Claim("urn:local:permission:b", "true"));
+                identity.AddClaim(new Claim(ClaimSettings.UrnLocalPermissionA, "true"));
+                identity.AddClaim(new Claim(ClaimSettings.UrnLocalPermissionB, "true"));
+                identity.AddClaim(new Claim(ClaimSettings.UrnLocalProductId, "abc"));
 
                 return new ClaimsPrincipal(identity);
             }

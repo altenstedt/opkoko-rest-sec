@@ -13,6 +13,8 @@ namespace ProductsService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IClaimsTransformation, ClaimsTransformation>();
+            services.AddScoped<IAuthorizationServiceAdapter, AuthorizationServiceAdapter>();
+            services.AddScoped<IRepository, Repository>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {

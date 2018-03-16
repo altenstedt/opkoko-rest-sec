@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ProductsService
@@ -10,7 +5,14 @@ namespace ProductsService
     [Route("products")]
     public class ProductsController : Controller
     {
-        private readonly Repository repository = new Repository();
+        private readonly IAuthorizationServiceAdapter _authorizationServiceAdapter;
+        private readonly IRepository _repository;
+
+        public ProductsController(IAuthorizationServiceAdapter authorizationServiceAdapter, IRepository repository)
+        {
+            _authorizationServiceAdapter = authorizationServiceAdapter;
+            _repository = repository;
+        }
 
         [HttpGet]
         public IActionResult GetById(string id)
@@ -22,36 +24,19 @@ namespace ProductsService
 
             var productId = new ProductId(id);
 
-            var product = repository.GetById(productId);
+            var product = _repository.GetById(productId);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            if (!product.CanRead(User))
+            if (!_authorizationServiceAdapter.CanRead(product, User))
             {
                 return Forbid();
             }
 
             return Ok(product);
-        }
-    }
-
-    public class Product
-    {
-        public Product(ProductId id)
-        {
-            Id = id;
-        }
-
-        public ProductId Id { get; }
-
-        public string Name => "My Product";
-
-        public bool CanRead(ClaimsPrincipal principal)
-        {
-            return principal.HasClaim(c => c.Type == "scope" && c.Value.Contains("read:product"));
         }
     }
 }
