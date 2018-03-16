@@ -10,9 +10,9 @@ namespace ProductsService
     [Route("products")]
     public class ProductsController : Controller
     {
-        private readonly Dictionary<string, Product> repository = new Dictionary<string, Product>
+        private readonly Dictionary<ProductId, Product> repository = new Dictionary<ProductId, Product>
         {
-            ["abc"] = new Product("abc")
+            [new ProductId("abc")] = new Product(new ProductId("abc"))
         };
 
         [HttpGet]
@@ -20,15 +20,17 @@ namespace ProductsService
         {
             if (!ProductId.IsValidId(id))
             {
-                return BadRequest();
+                return BadRequest(); // https://stackoverflow.com/q/3290182/291299
             }
 
-            if (string.IsNullOrEmpty(id) || !repository.ContainsKey(id))
+            var productId = new ProductId(id);
+
+            var product = repository.GetValueOrDefault(productId);
+
+            if (product == null)
             {
                 return NotFound();
             }
-
-            var product = repository[id];
 
             if (!product.CanRead(User))
             {
@@ -41,9 +43,9 @@ namespace ProductsService
 
     public class Product
     {
-        public Product(string id)
+        public Product(ProductId id)
         {
-            Id = new ProductId(id);
+            Id = id;
         }
 
         public ProductId Id { get; }
@@ -60,7 +62,7 @@ namespace ProductsService
     {
         public ProductId(string id)
         {
-            AssertId(id);
+            AssertValidId(id);
 
             Value = id;
         }
@@ -69,14 +71,59 @@ namespace ProductsService
 
         public static bool IsValidId(string id)
         {
-            return id.All(char.IsLetterOrDigit); // Regex.IsMatch(id, "^[a-f0-9]+$");
+            return !string.IsNullOrEmpty(id) && id.Length < 10 && id.All(char.IsLetterOrDigit);
         }
 
-        public static void AssertId(string id)
+        public static void AssertValidId(string id)
         {
             if (!IsValidId(id))
             {
                 throw new ArgumentException($"Id {id} is not valid.");
+            }
+        }
+
+        public static bool operator ==(ProductId left, ProductId right)
+        {
+            if (ReferenceEquals(null, left))
+            {
+                return ReferenceEquals(null, right);
+            }
+
+            if (ReferenceEquals(null, right))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            return string.Equals(left.Value, right.Value, StringComparison.Ordinal);
+        }
+
+        public static bool operator !=(ProductId left, ProductId right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return (ProductId)obj == this; // This works since we also override the == operator.
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 23;
+                hash = hash * 31 + Value.GetHashCode();
+
+                return hash;
             }
         }
     }
