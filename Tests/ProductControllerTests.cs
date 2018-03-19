@@ -16,10 +16,10 @@ namespace Tests
             var authMock = new Mock<IAuthorizationServiceAdapter>();
             authMock.Setup(a => a.CanRead(It.IsAny<IAuthorizedResource>(), It.IsAny<IPrincipal>())).Returns(false);
 
-            var repoMock = new Mock<IRepository>();
-            repoMock.Setup(r => r.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
+            var productServiceMock = new Mock<IProductsService>();
+            productServiceMock.Setup(ps => ps.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
 
-            var controller = new ProductsController(authMock.Object, repoMock.Object);
+            var controller = new ProductsController(authMock.Object, productServiceMock.Object);
 
             var result = controller.GetById("abc");
 
@@ -32,10 +32,10 @@ namespace Tests
             var authMock = new Mock<IAuthorizationServiceAdapter>();
             authMock.Setup(a => a.CanRead(It.IsAny<IAuthorizedResource>(), It.IsAny<IPrincipal>())).Returns(true);
 
-            var repoMock = new Mock<IRepository>();
-            repoMock.Setup(r => r.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
+            var productServiceMock = new Mock<IProductsService>();
+            productServiceMock.Setup(ps => ps.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
 
-            var controller = new ProductsController(authMock.Object, repoMock.Object);
+            var controller = new ProductsController(authMock.Object, productServiceMock.Object);
 
             var result = controller.GetById("abc");
 
@@ -50,10 +50,10 @@ namespace Tests
             var authMock = new Mock<IAuthorizationServiceAdapter>();
             authMock.Setup(a => a.CanRead(It.IsAny<IAuthorizedResource>(), It.IsAny<IPrincipal>())).Returns(true);
 
-            var repoMock = new Mock<IRepository>();
-            repoMock.Setup(r => r.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
+            var productServiceMock = new Mock<IProductsService>();
+            productServiceMock.Setup(ps => ps.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
 
-            var controller = new ProductsController(authMock.Object, repoMock.Object);
+            var controller = new ProductsController(authMock.Object, productServiceMock.Object);
 
             var result = controller.GetById(id);
 
@@ -66,10 +66,10 @@ namespace Tests
             var authMock = new Mock<IAuthorizationServiceAdapter>();
             authMock.Setup(a => a.CanRead(It.IsAny<IAuthorizedResource>(), It.IsAny<IPrincipal>())).Returns(true);
 
-            var repoMock = new Mock<IRepository>();
-            repoMock.Setup(r => r.GetById(It.IsAny<ProductId>())).Returns((Product)null);
+            var productServiceMock = new Mock<IProductsService>();
+            productServiceMock.Setup(ps => ps.GetById(It.IsAny<ProductId>())).Returns((Product)null);
 
-            var controller = new ProductsController(authMock.Object, repoMock.Object);
+            var controller = new ProductsController(authMock.Object, productServiceMock.Object);
 
             var result = controller.GetById("def"); // This is a valid, non-existing id
 

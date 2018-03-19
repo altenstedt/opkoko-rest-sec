@@ -6,15 +6,16 @@ namespace ProductsService
     public class ProductsController : Controller
     {
         private readonly IAuthorizationServiceAdapter _authorizationServiceAdapter;
-        private readonly IRepository _repository;
+        private readonly IProductsService _productsService;
 
-        public ProductsController(IAuthorizationServiceAdapter authorizationServiceAdapter, IRepository repository)
+        public ProductsController(IAuthorizationServiceAdapter authorizationServiceAdapter, IProductsService productsService)
         {
             _authorizationServiceAdapter = authorizationServiceAdapter;
-            _repository = repository;
+            _productsService = productsService;
         }
 
         [HttpGet]
+        [Route("{id}")]
         public IActionResult GetById(string id)
         {
             if (!ProductId.IsValidId(id))
@@ -24,7 +25,7 @@ namespace ProductsService
 
             var productId = new ProductId(id);
 
-            var product = _repository.GetById(productId);
+            var product = _productsService.GetById(productId);
 
             if (product == null)
             {

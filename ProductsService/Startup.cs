@@ -14,7 +14,7 @@ namespace ProductsService
         {
             services.AddSingleton<IClaimsTransformation, ClaimsTransformation>();
             services.AddScoped<IAuthorizationServiceAdapter, AuthorizationServiceAdapter>();
-            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IProductsService, ProductsService>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {

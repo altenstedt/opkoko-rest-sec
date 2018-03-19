@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace ProductsService
 {
-    public class Repository : IRepository
+    public class ProductsService : IProductsService
     {
-        private readonly Dictionary<ProductId, Product> dictionary = new Dictionary<ProductId, Product>
+        private readonly Dictionary<ProductId, Product> _productRepository = new Dictionary<ProductId, Product>
         {
             [new ProductId("abc")] = new Product(new ProductId("abc")),
             [new ProductId("def")] = new Product(new ProductId("def")),
@@ -13,11 +13,11 @@ namespace ProductsService
 
         public Product GetById(ProductId id)
         {
-            return dictionary.GetValueOrDefault(id);
+            return _productRepository.GetValueOrDefault(id);
         }
     }
 
-    public interface IRepository
+    public interface IProductsService
     {
         Product GetById(ProductId id);
     }
