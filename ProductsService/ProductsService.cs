@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Security.Claims;
+using System.Security.Principal;
 
 namespace ProductsService
 {
@@ -11,14 +14,63 @@ namespace ProductsService
             [new ProductId("ghi")] = new Product(new ProductId("ghi"))
         };
 
-        public Product GetById(ProductId id)
+        public ProductResult GetById(IPrincipal principal, ProductId id)
         {
-            return _productRepository.GetValueOrDefault(id);
+            if (!((ClaimsPrincipal)principal).HasClaim(
+                c => c.Type == ClaimSettings.Scope && c.Value.Contains(ClaimSettings.ReadProduct)))
+            {
+                //TODO: audit log unauthorized, reason Scope
+                return new ProductResult(ServiceResult.Forbidden, null);
+            }
+
+            if (!((ClaimsPrincipal)principal).HasClaim(
+                c => c.Type == ClaimSettings.UrnLocalProductId && string.Equals(c.Value, id.Value, StringComparison.Ordinal)))
+            {
+                //TODO: audit  log unauthorized, reason UrnLocalProductId
+                return new ProductResult(ServiceResult.Forbidden, null);
+            }
+
+            var product = _productRepository.GetValueOrDefault(id);
+            if (product == null)
+            {
+                //TODO: log warning, not found
+                return new ProductResult(ServiceResult.NotFound, null);
+            }
+
+            //If search, and multiple products are returned, then we also need to check that all result items are allowed 
+            if (!((ClaimsPrincipal)principal).HasClaim(
+                c => c.Type == ClaimSettings.UrnLocalProductId && string.Equals(c.Value, product.Id.Value, StringComparison.Ordinal)))
+            {
+                //TODO: audit log unauthorized, reason UrnLocalProductId
+                return new ProductResult(ServiceResult.Forbidden, null);
+            }
+
+            //TODO: audit log access
+            return new ProductResult(ServiceResult.Ok, product);
         }
     }
 
     public interface IProductsService
     {
-        Product GetById(ProductId id);
+        ProductResult GetById(IPrincipal principal, ProductId id);
+    }
+
+    public class ProductResult
+    {
+        public ProductResult(ServiceResult result, Product product)
+        {
+            Result = result;
+            Value = product;
+        }
+
+        public ServiceResult Result { get; }
+        public Product Value { get; }
+    }
+
+    public enum ServiceResult
+    {
+        Forbidden,
+        NotFound,
+        Ok
     }
 }

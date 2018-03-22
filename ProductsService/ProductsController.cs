@@ -5,12 +5,10 @@ namespace ProductsService
     [Route("products")]
     public class ProductsController : Controller
     {
-        private readonly IAuthorizationServiceAdapter _authorizationServiceAdapter;
         private readonly IProductsService _productsService;
 
-        public ProductsController(IAuthorizationServiceAdapter authorizationServiceAdapter, IProductsService productsService)
+        public ProductsController(IProductsService productsService)
         {
-            _authorizationServiceAdapter = authorizationServiceAdapter;
             _productsService = productsService;
         }
 
@@ -25,19 +23,19 @@ namespace ProductsService
 
             var productId = new ProductId(id);
 
-            var product = _productsService.GetById(productId);
+            var productResult = _productsService.GetById(User, productId);
 
-            if (product == null)
+            if (productResult.Result == ServiceResult.NotFound)
             {
                 return NotFound();
             }
 
-            if (!_authorizationServiceAdapter.CanRead(product, User))
+            if (productResult.Result == ServiceResult.Forbidden)
             {
                 return Forbid();
             }
 
-            return Ok(product);
+            return Ok(productResult.Value);
         }
     }
 }

@@ -8,18 +8,15 @@ using Moq;
 namespace Tests
 {
     [Trait("Category", "Unit")]
-    public class ProductControllerTests
+    public class ProductsControllerTests
     {
         [Fact]
         public void GetProductsByIdShouldReturn403WhenCanNotRead()
         {
-            var authMock = new Mock<IAuthorizationServiceAdapter>();
-            authMock.Setup(a => a.CanRead(It.IsAny<IAuthorizedResource>(), It.IsAny<IPrincipal>())).Returns(false);
-
             var productServiceMock = new Mock<IProductsService>();
-            productServiceMock.Setup(ps => ps.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
+            productServiceMock.Setup(ps => ps.GetById(It.IsAny<IPrincipal>(), It.IsAny<ProductId>())).Returns(new ProductResult(ServiceResult.Forbidden, null));
 
-            var controller = new ProductsController(authMock.Object, productServiceMock.Object);
+            var controller = new ProductsController(productServiceMock.Object);
 
             var result = controller.GetById("abc");
 
@@ -29,13 +26,10 @@ namespace Tests
         [Fact]
         public void GetProductsByIdShouldReturn200WhenAuthorized()
         {
-            var authMock = new Mock<IAuthorizationServiceAdapter>();
-            authMock.Setup(a => a.CanRead(It.IsAny<IAuthorizedResource>(), It.IsAny<IPrincipal>())).Returns(true);
-
             var productServiceMock = new Mock<IProductsService>();
-            productServiceMock.Setup(ps => ps.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
+            productServiceMock.Setup(ps => ps.GetById(It.IsAny<IPrincipal>(), It.IsAny<ProductId>())).Returns(new ProductResult(ServiceResult.Ok, new Product(new ProductId("abc"))));
 
-            var controller = new ProductsController(authMock.Object, productServiceMock.Object);
+            var controller = new ProductsController(productServiceMock.Object);
 
             var result = controller.GetById("abc");
 
@@ -47,13 +41,10 @@ namespace Tests
         [MemberData(nameof(InvalidIds))]
         public void GetProductsByIdShouldReturn400WhenInvalidId(string id)
         {
-            var authMock = new Mock<IAuthorizationServiceAdapter>();
-            authMock.Setup(a => a.CanRead(It.IsAny<IAuthorizedResource>(), It.IsAny<IPrincipal>())).Returns(true);
-
             var productServiceMock = new Mock<IProductsService>();
-            productServiceMock.Setup(ps => ps.GetById(It.IsAny<ProductId>())).Returns(new Product(new ProductId("abc")));
+            productServiceMock.Setup(ps => ps.GetById(It.IsAny<IPrincipal>(), It.IsAny<ProductId>())).Returns(new ProductResult(ServiceResult.Ok, new Product(new ProductId("abc"))));
 
-            var controller = new ProductsController(authMock.Object, productServiceMock.Object);
+            var controller = new ProductsController(productServiceMock.Object);
 
             var result = controller.GetById(id);
 
@@ -63,13 +54,10 @@ namespace Tests
         [Fact]
         public void GetProductsByIdShouldReturn404WhenNotFound()
         {
-            var authMock = new Mock<IAuthorizationServiceAdapter>();
-            authMock.Setup(a => a.CanRead(It.IsAny<IAuthorizedResource>(), It.IsAny<IPrincipal>())).Returns(true);
-
             var productServiceMock = new Mock<IProductsService>();
-            productServiceMock.Setup(ps => ps.GetById(It.IsAny<ProductId>())).Returns((Product)null);
-
-            var controller = new ProductsController(authMock.Object, productServiceMock.Object);
+            productServiceMock.Setup(ps => ps.GetById(It.IsAny<IPrincipal>(), It.IsAny<ProductId>())).Returns(new ProductResult(ServiceResult.NotFound, null));
+            
+            var controller = new ProductsController(productServiceMock.Object);
 
             var result = controller.GetById("def"); // This is a valid, non-existing id
 
