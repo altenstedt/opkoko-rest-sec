@@ -35,6 +35,7 @@ namespace ProductsService
         {
             app.UseAuthentication();
             app.UseMvc();
+            app.UseHeaders();
         }
     }
 }
