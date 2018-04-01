@@ -1,13 +1,13 @@
 What is this?
 -------------
 
-This directory holds the source code that was the result of the
-presentation on Service API security at OpKoKo 17.2, Skövde.
+This presentation holds the source code for the course on secure REST
+API in ASP.NET Core, in C#.
 
-Since the presentation, it has been expanded to contain a proper
-identity service, that support the OAuth2 client_credentials grant
-type , found in folder "IdentityService".  The code that we created in
-the presentation, is found in folder "ProductsService".
+This is Git branch `lab/3`, an excersice to use tests to verify the
+security and function of a secure REST API.  The tip of this branch is
+the starting point of the excersice.  You can roll back the last
+commit to see the intended end result of the lab.
 
 ## Run the code
 
@@ -19,27 +19,19 @@ dotnet test --filter Category=Unit
 ```
 
 To run the system tests, you will need both a running identity and
-product service:
+product service.  Open two terminal windows and start the services:
 
 ```shell
 cd ProductsService
-dotnet run
+dotnet run --server.urls=http://localhost:5000
 ```
 
 ```shell
 cd IdentityService
-dotnet run
+dotnet run --server.urls=http://localhost:4000
 ```
 
-Note the host and port where the product and identity service starts
-(we will assume http://localhost:5000, and http://localhost:4000,
-respectively.)
-
-Update field `baseUri` in class `SystemTests` to point to the URI of
-the running product service.  Also update the `tokenUri` field in
-class `TokenHttpClient` to point to the URI of the identity service.
-
-Run the system tests:
+Run the system tests in a separate terminal window:
 
 ```shell
 cd Tests
