@@ -1,26 +1,20 @@
 What is this?
 -------------
 
-This directory holds the source code that was the result of the
-presentation on Service API security at OpKoKo 17.2, Skövde.
+This presentation holds the source code for the course on secure REST
+API in ASP.NET Core, in C#.
 
-Since the presentation, it has been expanded to contain a proper
-identity service, that support the OAuth2 client_credentials grant
-type , found in folder "IdentityService".  The code that we created in
-the presentation, is found in folder "ProductsService".
+This is Git branch `lab/1`, an excersice to secure the REST API
+declared in class `ProductsController`.
 
 ## Run the code
 
-To run the sample, open two terminal windows.  In the first, start the
-product service:
+Open a terminal and start the products service:
 
 ```shell
 cd ProductsService
-dotnet run
+dotnet run --server.urls=http://localhost:5000
 ```
-
-Note the host and port where the service starts (we will assume
-http://localhost:5000 for the rest of these instructions.)
 
 You can now verify that you will get a 200 and product response from
 the products service:
@@ -32,15 +26,12 @@ GET http://localhost:5000/products HTTP/1.1
 Update class `Startup` in the products service to require user
 authentication and authorization using JWT.
 
-Start the identity service:
+Open a second terminal window and start the identity service:
 
 ```shell
 cd IdentityService
-dotnet run 
+dotnet run --server.urls=http://localhost:4000
 ```
-
-Note the host and port where the identity service starts (we will
-assume http://localhost:4000 for the rest of these instructions).
 
 Update the Authority URL in class `Startup` of the product service to
 point to your identity service.
@@ -66,3 +57,7 @@ And use the returned access token on the products endpoint:
 GET http://localhost:5000/products HTTP/1.1
 Authorization: bearer <paste your access token here>
 ```
+
+Enable local claims transformation using class `ClaimsTransformation`,
+set a breakpoint and inspect the incoming and outgoing
+`ClaimsPrincipal` object.
