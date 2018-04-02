@@ -1,36 +1,26 @@
 What is this?
 -------------
 
-This directory holds the source code that was the result of the
-presentation on Service API security at OpKoKo 17.2, Skövde.
+This presentation holds the source code for the course on secure REST
+API in ASP.NET Core, in C#.
 
-Since the presentation, it has been expanded to contain a proper
-identity service, that support the OAuth2 client_credentials grant
-type , found in folder "IdentityService".  The code that we created in
-the presentation, is found in folder "ProductsService".
+This is Git branch `lab/5`, an excercise on how to return certain
+security related headers.  The code on the tip of this branch
+represents the intended end result of this excercise.
 
 ## Run the code
 
-To run the sample, open two terminal windows.  In the first, start the
-token service:
-
-```shell
-cd IdentityService
-dotnet run 
-```
-
-Note the host and port where the identity service starts (we will
-assume http://localhost:4000 for the rest of these instructions).
-Update the Authority URL in class Startup to point to your identity
-service.  In the second terminal, start the products service.
+Open two terminal windows and start the product and identity service:
 
 ```shell
 cd ProductsService
-dotnet run
+dotnet run --server.urls=http://localhost:5000
 ```
 
-Note the host and port where the products service starts (we will
-assume http://localhost:4000 for the rest of these instructions).
+```shell
+cd IdentityService
+dotnet run --server.urls=http://localhost:4000
+```
 
 You can now first verify that you will get a 401 from the products
 service:
