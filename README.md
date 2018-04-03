@@ -4,9 +4,10 @@ What is this?
 This presentation holds the source code for the course on secure REST
 API in ASP.NET Core, in C#.
 
-This is Git branch `lab/5`, an excercise on how to return certain
-security related headers.  The code on the tip of this branch
-represents the intended end result of this excercise.
+This is Git branch `lab/6`, a refactored solution of branch `lab/5`
+that shows one way to compose your classes to make testing and
+responsibilities a little more clear, compared to the previous
+branches, which has each focused on clarity of a specific point.
 
 ## Run the code
 
@@ -22,11 +23,9 @@ cd IdentityService
 dotnet run --server.urls=http://localhost:4000
 ```
 
-You can now first verify that you will get a 401 from the products
-service:
-
-```
-GET http://localhost:5000/products HTTP/1.1
+```shell
+cd IdentityService
+dotnet run --server.urls=http://localhost:4000
 ```
 
 Get an access token from the token endpoint:

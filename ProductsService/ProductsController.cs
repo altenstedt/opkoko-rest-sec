@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ProductsService
@@ -6,27 +5,37 @@ namespace ProductsService
     [Route("products")]
     public class ProductsController : Controller
     {
-        [HttpGet]
-        public IActionResult Get()
-        {
-            var product = new Product(); // repository
+        private readonly IProductsService productsService;
 
-            if (!product.CanRead(User))
+        public ProductsController(IProductsService productsService)
+        {
+            this.productsService = productsService;
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public IActionResult GetById(string id)
+        {
+            if (!ProductId.IsValidId(id))
+            {
+                return BadRequest(); // https://stackoverflow.com/q/3290182/291299
+            }
+
+            var productId = new ProductId(id);
+
+            var productResult = productsService.GetById(User, productId);
+
+            if (productResult.Result == ServiceResult.NotFound)
+            {
+                return NotFound();
+            }
+
+            if (productResult.Result == ServiceResult.Forbidden)
             {
                 return Forbid();
             }
 
-            return Ok(product);
-        }
-    }
-
-    public class Product
-    {
-        public string Name => "My Product";
-
-        public bool CanRead(ClaimsPrincipal principal)
-        {
-            return principal.HasClaim(c => c.Type == "scope" && c.Value.Contains("read:product"));
+            return Ok(productResult.Value);
         }
     }
 }

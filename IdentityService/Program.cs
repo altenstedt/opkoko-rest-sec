@@ -20,5 +20,6 @@ namespace IdentityService
                 .UseKestrel(options => options.AddServerHeader = false) // Do not add server information header
                 .UseStartup<Startup>()
                 .Build();
+        }
     }
 }
