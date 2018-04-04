@@ -23,6 +23,11 @@ cd IdentityService
 dotnet run --server.urls=http://localhost:4000
 ```
 
+If you are running the services from an IDE, like Visual Studio for
+Windows, instead of from a terminal, you need to configure the ports
+in that IDE.  Each IDE works a little differently, but Google is
+probably your friend.
+
 Get an access token from the token endpoint:
 
 ```
