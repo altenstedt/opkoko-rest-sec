@@ -16,6 +16,11 @@ cd ProductsService
 dotnet run --server.urls=http://localhost:5000
 ```
 
+If you are running the service from an IDE, like Visual Studio for
+Windows, instead of from a terminal, you need to configure the port in
+that IDE.  Each IDE works a little differently, but Google is probably
+your friend.
+
 You can now verify that you will get a 200 and product response from
 the products service:
 
