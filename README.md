@@ -23,11 +23,6 @@ cd IdentityService
 dotnet run --server.urls=http://localhost:4000
 ```
 
-```shell
-cd IdentityService
-dotnet run --server.urls=http://localhost:4000
-```
-
 Get an access token from the token endpoint:
 
 ```
