@@ -5,11 +5,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ProductsService
 {
     public class Startup
     {
+        private readonly JwksStore jwksStore = new JwksStore("http://localhost:4001/jwks");
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IClaimsTransformation, ClaimsTransformation>();
@@ -17,8 +20,12 @@ namespace ProductsService
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.RequireHttpsMetadata = false; // Only for testing purposes
-                    options.Authority = "http://localhost:4000/";
-                    options.Audience = "https://example.com/api";
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = "urn:omegapoint:opkoko",
+                        ValidAudience = "urn:omegapoint:presentation",
+                        IssuerSigningKeys = jwksStore.SecurityKeys
+                    };
                 });
 
             services.AddMvc(config => {
